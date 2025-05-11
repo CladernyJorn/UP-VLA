@@ -91,7 +91,7 @@ After running this command, you can find the predicted images in the folder of `
 For your own data, you should first train the model with your own dataloader. For rollout, we provide a script `./policy_rollout/policy_upvla.py` as a reference, which can be directly used in Franka Emika Robotarm.
 
 ## CheckPoints 📷
-For reproduction results on Calvin dataset, we provide trained [checkpoint](https://huggingface.co/CladernyJorn/UP-VLA-Calvin/tree/main) for Calvin ABC-D task for download.
+For reproduction results on Calvin dataset, we provide trained [checkpoint](https://huggingface.co/CladernyJorn/UP-VLA-Calvin/tree/main) on Calvin ABC-D task for download.
 
 ## Bibtex 
 🌟 If you find our work helpful, please leave us a star and cite our paper. Thank you!
