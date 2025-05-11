@@ -102,5 +102,6 @@ For reproduction results on Calvin dataset, we provide trained [checkpoint](http
   journal={arXiv preprint arXiv:2501.18867},
   year={2025}
 }
+```
 ## Acknowledgments
 This work is based on [Show-o](https://github.com/showlab/Show-o), [Phi-1.5](https://huggingface.co/microsoft/phi-1_5) and [LLaVA](https://github.com/haotian-liu/LLaVA). Thanks to all the authors for their great work.
