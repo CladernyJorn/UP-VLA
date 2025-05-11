@@ -9,7 +9,7 @@
 
 </div>
 
-<img src="gallery/upvla.png" alt="UP-VLA samples" style="zoom:50%;" />
+<img src="gallery/upvla.png" alt="UP-VLA samples" style="zoom:25%;" />
 
 This repo is the official PyTorch implementation for ICML 2025 paper [**UP-VLA**](https://arxiv.org/abs/2501.18867).
 
