@@ -8,8 +8,11 @@
 <!-- <a href='https://sites.google.com/view/pad-paper'><img src='https://img.shields.io/badge/Project-Page-Blue'></a>  -->
 
 </div>
-
+<div align=center>
 <img src="gallery/upvla.png" alt="UP-VLA samples" align="middle"/>
+</div>
+
+
 
 This repo is the official PyTorch implementation for ICML 2025 paper [**UP-VLA**](https://arxiv.org/abs/2501.18867).
 
