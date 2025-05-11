@@ -79,9 +79,9 @@ You can skip the pretraining stage or using MMU dataset cotraining for policy le
 ## Evaluation 📊
 
 ### 📊 Rollout on Calvin benchmark
-You should install Calvin as described in installation section. Remember to reset the `dataset_path, root_data_dir` in `policy_rollout/calvin_evaluate_upvla.yaml` with the origin calvin abcd dataset. Then, you need modify `tuned_model_path` in `policy_rollout/upvla_model.yaml` to specify the checkpoint. You can directly use our provided checkpoint or your saved checkpoint using our training script.
+You should install Calvin as described in installation section. Remember to reset the `dataset_path, root_data_dir` in `policy_rollout/calvin_evaluate_upvla.yaml` with the origin calvin abcd dataset. Then, you need to modify `tuned_model_path` in `policy_rollout/upvla_model.yaml` to specify the checkpoint. You can directly use our provided checkpoint or your saved checkpoint using our training script.
 
-Lastly, you need to copy the scripts to the CALVIN evaluation folder (installed with the official repo) and run: 
+Lastly, copy the scripts and config files (`calvin_evaluate_upvla.yaml` and `upvla_model.yaml`) to the CALVIN evaluation folder (installed with the official repo) and run: 
 ```bash
 cd /path to your calvin folder
 python evaluation/calvin_evaluate_upvla.py
