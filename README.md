@@ -51,7 +51,7 @@ python process_bridge.py
 
 (2) Choice two (better for using your own robot data or dataloader):
 
-See the implementation of DataProvider class in "training/future_view_predction_w_action_dataset.py" and reimplement the dataloader class fit your dataset.
+See the implementation of `DataProvider` class in `training/future_view_predction_w_action_dataset.py` and reimplement the dataloader class fit your dataset.
 
 ### MMU Data
 We also use the [llava_tuning_665k_data](https://huggingface.co/datasets/liuhaotian/LLaVA-Instruct-150K/blob/main/llava_v1_5_mix665k.json) for cotraining to maintain model's multimodal understanding capability. If you don't want to cotrain with MMU dataset for training, you can modify the config file and exclude the mmu dataloader in `train_upvla.py`.
