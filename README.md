@@ -9,13 +9,13 @@
 
 </div>
 
-![DiT samples](gallery/upvla.pdf)
+![UP-VLA samples](gallery/upvla.png)
 
 This repo is the official PyTorch implementation for NeurIPS 2024 paper [**Prediction with Action**](https://arxiv.org/abs/2411.18179).
 
-## Friendship Link 🔥
+<!-- ## Friendship Link 🔥
 
-🔥🔥🔥**Dec. 2024:** We are excited to announce our latest work [**Video Prediction Policy: A Generalist Robot Policy with Predictive Visual Representations**](https://video-prediction-policy.github.io/) which is even stronger and faster. Video-Prediction-Policy finetune a video foundation model on manipulation domain with internet maniplation datasets to guide action learning.
+🔥🔥🔥**Dec. 2024:** We are excited to announce our latest work [**Video Prediction Policy: A Generalist Robot Policy with Predictive Visual Representations**](https://video-prediction-policy.github.io/) which is even stronger and faster. Video-Prediction-Policy finetune a video foundation model on manipulation domain with internet maniplation datasets to guide action learning. -->
 
 
 ##  Installation 🛠️
