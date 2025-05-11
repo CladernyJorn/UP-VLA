@@ -14,7 +14,7 @@
 
 
 
-This repo is the official PyTorch implementation for ICML 2025 paper [**UP-VLA**](https://arxiv.org/abs/2501.18867). The repo is built on a the code base of [Show-o](https://github.com/showlab/Show-o).
+This repo is the official PyTorch implementation for ICML 2025 paper [**UP-VLA**](https://arxiv.org/abs/2501.18867).
 
 <!-- ## Friendship Link 🔥
 
@@ -22,115 +22,85 @@ This repo is the official PyTorch implementation for ICML 2025 paper [**UP-VLA**
 
 
 ##  Installation 🛠️
-First, download and set up the repo.
+First, download and set up the environment.
 
 ```bash
-git clone https://github.com/Robert-gyj/prediction_with_action.git
-conda env create -f environment.yml
-conda activate PAD
+git clone https://github.com/CladernyJorn/UP-VLA.git
+pip install -r requirements.txt
 ```
-
-
-If you want to perform experiments in [Metaworld](https://github.com/Farama-Foundation/Metaworld), you need to first install the `Mujoco`. Metaworld is in active developing with different versions of `Mujoco`, we include a older version of Metaworld in codebase based on `mujoco-py==2.0.x/2.1.x`. 
-Install Mujoco and metaworld:
+Login your wandb account on your machine or server.
 ```bash
-# If you do not want to use metawolrd, you can skip installations below.
-
-# dowload
-dowload from https://mujoco.org/download/mujoco210-linux-x86_64.tar.gz
-mkdir ~/.mujoco
-tar -zxvf mujoco210-linux-x86_64.tar.gz -C ~/.mujoco
-# add following lines to the end of ~/.bashrc
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/{user_name}/.mujoco/mujoco210/bin
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH::/usr/lib/nvidia
-source ~/.bashrc
-
-# install mujoco_py
-pip install mujoco_py==2.1.2.14
-
-# test
-import mujoco_py
-
-# After install the mujoco_py, install Metaworld:
-cd metaworld
-pip install -e .
+wandb login <your wandb keys>
 ```
 
+If you want to perform experiments in [Calvin](https://arxiv.org/pdf/2112.03227), you need also prepare with the calvin environment following the official repo of [Calvin](https://github.com/mees/calvin.git).
 
-## CheckPoints 📷
-First, download [clip-vit-base-patch32](https://huggingface.co/openai/clip-vit-base-patch32) and [sd-vae-ft-mse](https://huggingface.co/stabilityai/sd-vae-ft-mse) checkpoints from the huggingface. These models are freeze during trainning.
+Download [showlab/show-o-w-clip-vit-512x512](https://huggingface.co/showlab/show-o-w-clip-vit-512x512) and or other show-o backbone you want from the huggingface. UP-VLA is built on the backbone of `show-o-w-clip-vit-512x512` by default. Prepare the backbone checkpoints under the `./showlab` folder.
 
-Next, download the PAD checkpoint. For convenience, we offer two types of PAD models for download, depending on your requirements.
+## Data Preparation
+### Embodied Data
+(1) Choice one:
 
-| Ckpt name     | Training type | Parameter Num |
-|---------------|------------------|---------|
-| [bridge-pre](https://huggingface.co/yjguo/pad_bridge_pre/tree/main) | Bridge Dataset Pretrain         | ~670M    |
-| [bridge-pre-mw-ft](https://huggingface.co/yjguo/pad_bridge_pre/tree/main) |    Bridge Dataset Pretrain + Metaworld Finetuned      | ~670M    |
+Download [Calvin](https://github.com/mees/calvin.git) dataset and [Bridge](https://docs.google.com/spreadsheets/d/1rPBD77tk60AEIGZrGSODwyyzs5FgCU9Uz3h-3_t2A9g/edit?gid=0#gid=0) dataset (you can skip the bridge dataset during pretraining), and process the raw data with script in `./preprocess_data`:
+```bash
+cd preprocess_data
+# modify the path in scripts
+python process_calvin.py
+python process_bridge.py
+```
 
+(2) Choice two (better for using your own robot data or dataloader):
+See the implementation of DataProvider class in "training/future_view_predction_w_action_dataset.py" and reimplement the dataloader class fit your dataset.
 
-**📊 Try Predictions on Bridge:** If you want to make predictions on bridge datasets, download the bridge-pre model.
+### MMU Data
+We also use the [llava_tuning_665k_data](https://huggingface.co/datasets/liuhaotian/LLaVA-Instruct-150K/blob/main/llava_v1_5_mix665k.json) for cotraining to maintain model's multimodal understanding capability. If you don't want to cotrain with MMU dataset for training, you can modify the config file and exclude the mmu dataloader in `train_upvla.py`.
 
-**📊 Try Rollouts in Metaworld:** If you want to rollout on Metaworld benchmark, download the bridge-pre-mw-ft model.
+## Train UP-VLA 🛸 
+### 🛸 Training requirements
+Our experiments are run on 4 A800 80G GPU. Under this setting, the training process takes ~70G GPU memory. 
 
-**🛸 Train PAD in new environments**: If you want to run PAD algorithm in other environments, download the pretrained bridge-pre model and initializa your model with it.
+If you have limited GPU memory, you can modify the batchsize setting in `config/yaml` config files. 
 
+### 🛸 Training Pipeline
+(1) Prediction and Understanding Pretraining：
+```bash
+CUDA_VISIBLE_DEVICES=0,1,2,3 accelerate launch --config_file ./accelerate_configs/4_gpus_deepspeed_zero2.yaml --main_process_port=8888 train_upvla.py config=./config/upvla_pred_tuning.yaml
+```
 
+(2) Prediction and Understanding Pretraining：
+```bash
+CUDA_VISIBLE_DEVICES=0,1,2,3 accelerate launch --config_file ./accelerate_configs/4_gpus_deepspeed_zero2.yaml --main_process_port=8888 train_upvla.py config=./config/upvla_action_tuning.yaml
+```
+
+You can skip the pretraining stage or using MMU dataset cotraining for policy learning by modify the data_path and coeff arguments in config files.
 
 
 ## Evaluation 📊
-### 📊 Make future predictions on the Bridge dataset
-For your convenience, we put some bridge video samples in the folder `gallery/bridge`. You can visualize predictions by running inference on ckpt [bridge-pre](https://github.com/Robert-gyj/Prediction_with_Action). Remember to reset the `ckpt_path, vae_path, clip_path, sample_name` in `BRIDGE_CONFIG` of `evaluation/run_cfg.py` to your model download locations.
 
+### 📊 Rollout on Calvin benchmark
+You should install Calvin as described in installation section. Remember to reset the `dataset_path, root_data_dir` in `policy_rollout/calvin_evaluate_upvla.yaml` with the origin calvin abcd dataset. Then, you need modify `tuned_model_path` in `policy_rollout/upvla_model.yaml` to specify the checkpoint. You can directly use our provided checkpoint or your saved checkpoint using our training script.
+
+Lastly, you need to copy the scripts to the CALVIN evaluation folder (installed with the official repo) and run: 
 ```bash
-python run_bridge.py
+cd /path to your calvin folder
+python evaluation/calvin_evaluate_upvla.py
 ```
+After running this command, you can find the predicted images in the folder of `tuned_model_path` which visualize both the current observations and future predictions.
 
-After running this command, you can find some outputs in the folder `output/bridge_prediction` which should be simialr to that in `gallery/bridge_prediction`
+### 📊 Rollout in your own embodiments
+For your own data, you should first train the model with your own dataloader. For rollout, we provide a script `./policy_rollout/policy_upvla.py` as a reference, which can be directly used in Franka Emika Robotarm.
 
-
-### 📊 Rollout on Metaworld benchmark
-You should install Metaworld as described in installation section and also download the [bridge-pre-mw-ft](https://github.com/Robert-gyj/Prediction_with_Action) ckpt.  Remember to reset the `ckpt_path, vae_path, clip_path` in `META_CONFIG` inside `evaluation/run_cfg.py` to where your model located, also reset the roll tasks `task_list`. All available task names are listed in `INSTRUCTION` inside `evaluation/run_cfg.py`.  After these setup finishes, you can rollout with:
-
-```bash
-python run_meatworld.py
-```
-
-After running this command, you can find some rollout videos in the folder `output/rollout_metaworld` which visualize both the current observations and future predictions. Some video examples are provided in `gallery/rollout_metaworld`.
-
-
-
-## Trainning PAD 🛸 
-
-
-### 🛸 Prepare your datasets
-(1) We highly recommand to pre-encode your rgb images and save the corresponding latents, since the VAE encoder is freeze during training and you do not need to encode the same image for many times. This process will save GPU memory cost and reduce training time. We provide an example script in [`extract_features.py`](extract_features.py), you should modify this file to fit your dataset.
-
-(2) Also you need to reimplement the `RobotDataset` class in [`train_robot.py`](train_robot.py) to fit your dataset.
-
-### 🛸 Training requirements
-Our experiments are run with batch size 64*4=256 on 4 A800 80G cards. Under this setting, the training process takes ~70G GPU memory and the training speed is ~1.20 ite/s. 
-
-If you have limited GPU memory, you can use `torch.utils.checkpoint.checkpoint` to save GPU memory which sacrifice some training speed. You just need to set the `--ckpt_wrapper` flag in [`exp.sh`](exp.sh) to enable it. Under this setting, the GPU memory can be reduced to ~18G and the training speed slightly decrease to ~0.90 ite/s. 
-
-### 🛸 Training script
-We provide two training script for PAD in [`train_robot.py`](train_robot.py) and [`train_cotrain.py`](train_cotrain.py). You can initailiza the model with the pretrained ckpt [bridge-pre](https://github.com/Robert-gyj/Prediction_with_Action) by setting `--rgb_init xxx`.
-
-You can train directly on custemer robot datasets with [`train_robot.py`](train_robot.py). Also, you can cotrain on robot datasets and internet video datasets with [`train_cotrain.py`](train_cotrain.py).
-
-
-To launch PAD training with multiple GPUs on one node:
-```bash
-bash exp.sh
-```
-
-
+## CheckPoints 📷
+For reproduction results on Calvin dataset, we provide trained [checkpoint](https://huggingface.co/CladernyJorn/UP-VLA-Calvin/tree/main) for Calvin ABC-D task for download.
 
 ## Bibtex 
 🌟 If you find our work helpful, please leave us a star and cite our paper. Thank you!
 ```
-@article{guo2024prediction,
-  title={Prediction with Action: Visual Policy Learning via Joint Denoising Process},
-  author={Guo, Yanjiang and Hu, Yucheng and Zhang, Jianke and Wang, Yen-Jen and Chen, Xiaoyu and Lu, Chaochao and Chen, Jianyu},
-  journal={arXiv preprint arXiv:2411.18179},
-  year={2024}
+@article{zhang2025up,
+  title={UP-VLA: A Unified Understanding and Prediction Model for Embodied Agent},
+  author={Zhang, Jianke and Guo, Yanjiang and Hu, Yucheng and Chen, Xiaoyu and Zhu, Xiang and Chen, Jianyu},
+  journal={arXiv preprint arXiv:2501.18867},
+  year={2025}
 }
+## Acknowledgments
+This work is based on [Show-o](https://github.com/showlab/Show-o), [Phi-1.5](https://huggingface.co/microsoft/phi-1_5) and [LLaVA](https://github.com/haotian-liu/LLaVA). Thanks to all the authors for their great work.

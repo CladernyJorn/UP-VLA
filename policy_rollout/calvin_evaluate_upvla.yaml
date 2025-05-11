@@ -1,0 +1,60 @@
+defaults:
+  - /callbacks/rollout/tasks@tasks: new_playtable_tasks
+  - annotations: new_playtable_validation
+  - datamodule: calvin
+
+model_config: ./config/upvla_model.yaml
+
+eval_cfg_overwrite:
+  datamodule:
+    datasets:
+      lang_dataset:
+        lang_folder: lang_annotations
+  overwrite_module_cfg:
+    voltron_cache: ./pretrained_model_weights
+
+ep_len: 360
+num_sequences: 1000
+num_videos: 10
+lang_embeddings: null
+render: False
+log_wandb: True
+wandb:
+  entity: omeryagmurlu
+debug: False
+dataset_path: ../calvin/task_ABC_D # path to calvin
+model_name: mdt_test
+device: 0
+sampler_type: ddim
+multistep: 10
+num_sampling_steps: 10
+cond_lambda: 1
+cfg_value: 1
+sigma_min: 1.0
+sigma_max: 80
+noise_scheduler: exponential
+
+lang_folder: lang_annotations
+act_seq_len: 10
+obs_seq_len: 1
+future_range: 29
+
+log_dir: ./logs
+slurm: false
+min_window_size: 21 # 21
+max_window_size: 50
+batch_size: 38
+seed: 242
+devices: 4
+goal_window_size: 1
+p_last_state: 0
+log_every: 50
+rollout_lh_skip_epochs: 290
+window_sampling_strategy: 'geometric'
+num_workers: 12
+img_gen_frame_diff: 3
+benchmark_name: calvin_abcd # calvin_abcd
+root_data_dir: ../calvin/task_ABC_D # path to calvin
+# sigma_min: null
+# sigma_max: null
+# noise_scheduler: null

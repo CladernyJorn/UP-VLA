@@ -1,0 +1,99 @@
+wandb:
+  entity: null
+#  run_id: askkz9i2
+  resume: 'auto'
+
+experiment:
+    project: "Robot-Project"
+    name: "UP-VLA-action-10"
+    output_dir: "UP-VLA-action-10"
+    save_every: 10000
+    eval_every: 2500
+    generate_every: 5000
+    log_every: 50
+    log_grad_norm_every: 500
+    resume_from_checkpoint: 'latest'
+
+act_step: 10
+
+model:
+    vq_model:
+        type: "magvitv2"
+        vq_model_name: "showlab/magvitv2"
+
+    showo:
+        load_from_showo: True
+        pretrained_model_path: "showlab/show-o-w-clip-vit-512x512"
+        w_clip_vit: True
+        vocab_size: 58498
+        llm_vocab_size: 50295
+        llm_model_path: './showlab/phi-1_5'
+        codebook_size: 8192
+        num_vq_tokens: 1024
+        num_new_special_tokens: 10  # <|soi|> <|eoi|> <|sov|> <|eov|> <|t2i|> <|mmu|> <|t2v|> <|v2v|> <|lvg|> <|pad|>
+
+    vla:
+        num_view: 1 # 1: third 2: third+gripper
+
+    gradient_checkpointing: True
+
+dataset:
+    gen_type: "future_view_prediction_w_action" # action will not be used in pred pretraining stage
+    und_type: "llava_tuning"
+    combined_loader_mode: "min_size"
+    params:
+        train_pre_shards_path_or_url: "path to calvin or bridge training files" # e.g. ./preprocess_data/calvin_processed_training, see more details in preprocess_data/process_calvin.py and preprocess_data/process_bridge.py
+        train_mmu_shards_path_or_url: "path to llava_tuning_665k_data" # use data downloaded from huggingface
+        add_caption_prompt: True
+        validation_prompts_file: "./validation_samples/predict_prompts.txt"
+        shuffle_buffer_size: 1000
+        num_workers: 8
+        resolution: 512
+        pin_memory: True
+        persistent_workers: True
+
+    preprocessing:
+        max_seq_length: 576 # for text tokens
+        resolution: 512
+        center_crop: False
+        random_flip: False
+
+optimizer:
+    name: adamw
+    params: # default adamw params
+        learning_rate: 0.0001
+        scale_lr: False # scale learning rate by total batch size
+        beta1: 0.9
+        beta2: 0.999
+        weight_decay: 0.01
+        epsilon: 1e-8
+
+lr_scheduler:
+    scheduler: "cosine"
+    params:
+        learning_rate: ${optimizer.params.learning_rate}
+        warmup_steps: 1000
+
+training:
+    clip_pad_tokens: False
+    gradient_accumulation_steps: 4
+    batch_size_pre: 4
+    batch_size_mmu: 4
+    mixed_precision: "bf16"
+    enable_tf32: True
+    seed: 10086
+    max_train_steps: 200000
+    overfit_one_batch: False
+    cond_dropout_prob: 0.0
+    min_masking_rate: 0.0
+    label_smoothing: 0.0
+    max_grad_norm: null
+    guidance_scale: 0.0
+    generation_timesteps: 12
+    pre_coeff: 1.0
+    act_coeff: 0.0 
+    mmu_coeff: 0.1
+eval: False
+mmu_image_root: "./validation_samples"
+question: 'Please describe this image in detail. *** Describe things you see in the image and point out their positions in this image.'
+max_new_tokens: 100
