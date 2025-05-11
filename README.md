@@ -1,7 +1,7 @@
 <div align="center">
 <h2><center>👉 UP-VLA: A Unified Understanding and Prediction Model for Embodied Agent</h2>
 
-[Jianke Zhang*](), [Yanjiang Guo*](), [Yucheng Hu*](), [Xiaoyu Chen](), [Xiang Zhu](), [Chaochao Lu](), [Jianyu Chen]()
+[Jianke Zhang*](), [Yanjiang Guo*](), [Yucheng Hu*](), [Xiaoyu Chen](), [Xiang Zhu](), [Jianyu Chen]()
 
 
 <a href='https://arxiv.org/abs/2501.18867'><img src='https://img.shields.io/badge/ArXiv-2501.18867-red'></a> 
@@ -14,7 +14,7 @@
 
 
 
-This repo is the official PyTorch implementation for ICML 2025 paper [**UP-VLA**](https://arxiv.org/abs/2501.18867).
+This repo is the official PyTorch implementation for ICML 2025 paper [**UP-VLA**](https://arxiv.org/abs/2501.18867). The repo is built on a the code base of [Show-o](https://github.com/showlab/Show-o).
 
 <!-- ## Friendship Link 🔥
 
