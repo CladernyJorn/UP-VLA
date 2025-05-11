@@ -9,7 +9,7 @@
 
 </div>
 
-![DiT samples](gallery/PAD_method.png)
+![DiT samples](gallery/upvla.pdf)
 
 This repo is the official PyTorch implementation for NeurIPS 2024 paper [**Prediction with Action**](https://arxiv.org/abs/2411.18179).
 
