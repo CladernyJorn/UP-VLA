@@ -39,7 +39,7 @@ Download [showlab/show-o-w-clip-vit-512x512](https://huggingface.co/showlab/show
 
 ## Data Preparation
 ### Embodied Data
-(1) Choice one:
+(1) Choice one
 
 Download [Calvin](https://github.com/mees/calvin.git) dataset and [Bridge](https://docs.google.com/spreadsheets/d/1rPBD77tk60AEIGZrGSODwyyzs5FgCU9Uz3h-3_t2A9g/edit?gid=0#gid=0) dataset (you can skip the bridge dataset during pretraining), and process the raw data with script in `./preprocess_data`:
 ```bash
@@ -50,6 +50,7 @@ python process_bridge.py
 ```
 
 (2) Choice two (better for using your own robot data or dataloader):
+
 See the implementation of DataProvider class in "training/future_view_predction_w_action_dataset.py" and reimplement the dataloader class fit your dataset.
 
 ### MMU Data
