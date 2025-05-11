@@ -9,7 +9,7 @@
 
 </div>
 <div align=center>
-<img src="gallery/upvla.png" alt="UP-VLA samples" align="middle"/>
+<img src="gallery/up_vla.jpg" alt="UP-VLA samples" align="middle"/>
 </div>
 
 
